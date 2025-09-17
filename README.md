@@ -1,227 +1,299 @@
-# 🏗️ 3D CAD Platform - Phase 1 POC
+# 🏗️ 3D CAD 平台開發藍圖
 
-A modern 3D CAD model visualization platform built with Next.js 14 and React Three Fiber.
-
-## 🚀 Features Completed (Phase 1)
-
-✅ **Foundation Setup**
-
-- Next.js 14 with TypeScript and Tailwind CSS
-- React Three Fiber for 3D rendering
-- Organized component structure
-
-✅ **3D Scene Management**
-
-- Canvas component with professional lighting setup
-- OrbitControls for intuitive camera movement
-- Environment mapping and shadows
-- Responsive grid system
-
-✅ **Test Objects & Interactions**
-
-- Animated test objects (cube, sphere, torus)
-- 60fps performance optimization
-- Interactive controls overlay
-
-✅ **Model Loading Pipeline**
-
-- ModelViewer component for glTF models
-- Auto-centering and scaling
-- Error handling and loading states
-- Shadow casting support
-
-## 🛠️ Tech Stack
-
-- **Frontend**: Next.js 14, React 19, TypeScript
-- **3D Engine**: React Three Fiber (@react-three/fiber)
-- **3D Utilities**: Drei (@react-three/drei)
-- **Styling**: Tailwind CSS
-- **Deployment**: Vercel-ready
-
-## 🚦 Getting Started
-
-### Prerequisites
-
-- Node.js 18+
-- npm or yarn
-
-### Installation
-
-1. **Install dependencies**
-
-   ```bash
-   npm install
-   ```
-
-2. **Start development server**
-
-   ```bash
-   npm run dev
-   ```
-
-3. **Open browser**
-   Navigate to `http://localhost:3000`
-
-### Available Scripts
-
-```bash
-npm run dev        # Start development server with Turbopack
-npm run build      # Build for production
-npm run start      # Start production server
-npm run lint       # Run ESLint
-npm run type-check # TypeScript type checking
-npm run preview    # Build and preview locally
-```
-
-## 📁 Project Structure
-
-```
-src/
-├── app/
-│   ├── layout.tsx          # Root layout
-│   ├── page.tsx            # Home page with 3D viewer
-│   └── globals.css         # Global styles
-├── components/
-│   └── 3d/
-│       ├── Scene.tsx       # Main 3D canvas with lighting
-│       ├── TestObjects.tsx # Animated test primitives
-│       ├── ModelViewer.tsx # glTF model loader
-│       └── Viewer3D.tsx    # Main 3D container
-├── lib/                    # Utility functions
-└── types/                  # TypeScript definitions
-```
-
-## 🎮 Controls
-
-- **Left Click + Drag**: Rotate camera
-- **Right Click + Drag**: Pan view
-- **Mouse Wheel**: Zoom in/out
-- **Reset**: Double-click to reset view
-
-## 🔧 Next Steps (Phase 2)
-
-### Week 1-2: Interactive Features
-
-- [ ] Material system with PBR textures
-- [ ] Transform controls (move, rotate, scale)
-- [ ] Object selection with highlighting
-- [ ] State management with Zustand
-
-### CAD Model Testing
-
-- [ ] Test Rhino → glTF export workflow
-- [ ] Optimize export settings
-- [ ] Handle large architectural models
-- [ ] Performance benchmarking
-
-## 📊 Performance Targets
-
-- **Framerate**: 60fps on mid-range devices ✅
-- **Load Times**: <3 seconds for standard models
-- **File Sizes**: <50MB per model optimized
-- **Browser Support**: Chrome 90+, Safari 14+
-
-## 🚀 Deployment
-
-### Vercel (Recommended)
-
-1. **Connect to Vercel**
-
-   ```bash
-   npx vercel
-   ```
-
-2. **Auto-deploy on push**
-   - Connect GitHub repository
-   - Automatic deployments on main branch
-
-### Manual Deployment
-
-1. **Build project**
-
-   ```bash
-   npm run build
-   ```
-
-2. **Deploy `out/` folder** to your hosting service
-
-## 🧪 Testing CAD Models
-
-### Supported Formats
-
-- **Primary**: glTF 2.0 (.gltf, .glb)
-- **Textures**: PBR materials (metalness, roughness, normal maps)
-- **Compression**: Draco geometry compression supported
-
-### Testing with Sample Models
-
-1. Place `.gltf` or `.glb` files in `public/models/`
-2. Update `Viewer3D` component:
-   ```tsx
-   <Viewer3D modelUrl="/models/your-model.glb" showTestObjects={false} />
-   ```
-
-### Rhino Export Settings (For Drik)
-
-- Export Format: glTF 2.0
-- Include Materials: Yes
-- Texture Resolution: 1024x1024 max
-- Enable Draco Compression: Yes
-- Weld Vertices: Yes
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-**Models not loading:**
-
-- Check file path in `public/` folder
-- Verify glTF format validity
-- Check browser console for errors
-
-**Performance issues:**
-
-- Reduce texture sizes
-- Enable Draco compression
-- Use LOD (Level of Detail) for complex models
-
-**TypeScript errors:**
-
-```bash
-npm run type-check
-```
-
-## 📈 Roadmap
-
-### Phase 1: POC ✅ (Current)
-
-- Basic 3D scene and model loading
-
-### Phase 2: MVP (3-4 weeks)
-
-- Interactive model editing
-- Material system
-- Local persistence
-
-### Phase 3: Platform (6-8 weeks)
-
-- Multi-user collaboration
-- Cloud backend (Supabase)
-- Format conversion pipeline
-
-## 🤝 Contributing
-
-1. Follow the established component structure
-2. Run type-checking before commits
-3. Test with various model complexities
-4. Document performance implications
-
-## 📝 License
-
-Private project for CAD platform development.
+## 📋 概述
+從概念驗證到生產級 3D 平台的漸進式開發，用於 CAD 模型可視化和協作。
 
 ---
 
-**Phase 1 Status**: ✅ **COMPLETE** - Ready for CAD model testing!
+## 🚀 階段一：概念驗證 (POC)
+**目標：「能否在網頁上顯示 CAD 模型？」**
 
-Next: Begin Phase 2 interactive features development.
+### 技術堆疊
+```
+前端：Next.js 14 + React Three Fiber
+函式庫：@react-three/fiber, @react-three/drei
+託管：Vercel
+```
+
+### 基礎設置
+**環境建置**
+- 建立 Next.js 專案並配置 TypeScript
+- 安裝 R3F 相關依賴包
+- 設置基本專案結構
+- 部署至 Vercel 進行測試
+
+**基礎 3D 場景**
+- 建立 Canvas 元件並配置基本光照
+- 添加 OrbitControls 進行攝影機移動
+- 使用基本幾何體進行測試（立方體/球體）
+- 確保流暢的 60fps 效能
+
+**模型載入管道**
+- 使用 useGLTF hook 測試 glTF 載入
+- 建立可重複使用的 ModelViewer 元件
+- 處理載入狀態和錯誤情況
+- 使用樣本建築模型進行測試
+
+### CAD 整合與完善
+**Rhino 匯出測試**
+- 與 Drik 合作測試 Rhino → glTF 匯出流程
+- 優化匯出設置（壓縮、紋理）
+- 測試各種模型複雜度
+- 記錄匯出最佳實踐
+
+**效能優化**
+- 必要時實作 LOD（細節層次）
+- 添加載入指示器
+- 針對行動裝置優化
+- 使用大型建築模型進行測試
+
+**UI 完善**
+- 添加基本控制項（重置攝影機、線框切換）
+- 響應式設計
+- 錯誤處理和備援方案
+- 為 Drik 建立匯出文檔
+
+### ✅ 成功標準
+- 模型載入功能正常運作
+- Rhino 匯出管道建立完成
+- 基本 3D 互動功能確認
+
+---
+
+## 🎯 階段二：MVP（互動式 3D 操作）
+**目標：「使用者能互動、修改、瀏覽和下載模型」**
+
+### 增強技術堆疊
+```
++ TransformControls (@react-three/drei)
++ 材質系統與紋理
++ Zustand（狀態管理）
++ 本地檔案上傳
++ localStorage 持久化
+```
+
+### 核心 MVP 功能
+
+### 🎮 **互動** - 增強 3D 互動功能
+**物件選擇與導覽**
+- 實作射線投射進行物件拾取
+- 為選中物件添加輪廓/高亮效果
+- 為複雜模型建立階層檢視
+- 支援 Ctrl+點擊多重物件選擇
+
+**進階攝影機控制**
+- 具備平滑過渡的增強 OrbitControls
+- 預設攝影機角度（正面、頂部、等距）
+- 聚焦/框選物件功能
+- 縮放至適合大小功能
+
+**檢視模式**
+- 線框模式切換
+- 內部結構的 X 光檢視
+- 建築模型的剖面切割
+- 光照控制（環境、陰影）
+
+### ✏️ **修改** - 模型變換
+**材質系統**
+- 建立材質庫（木材、金屬、混凝土、玻璃）
+- 實作點擊網格切換材質功能
+- 材質選擇器 UI 面板
+- 處理 PBR 材質（金屬度、粗糙度、法線貼圖）
+
+**變換控制**
+- 整合 drei 的 TransformControls
+- 物件移動/旋轉/縮放控制器
+- 對齊網格功能
+- 變換狀態持久化
+
+**進階修改**
+- 點擊放置 3D 註解
+- 具世界定位的文字標籤
+- 特定模型部件的評論串
+- 基本測量工具（距離、面積）
+
+### 📁 **瀏覽** - 模型管理
+**檔案上傳系統**
+- 多模型拖放介面
+- 支援格式（glTF、OBJ、FBX）
+- 大檔案進度指示器
+- 上傳模型的縮圖生成
+
+**模型畫廊**
+- 帶預覽的上傳模型網格檢視
+- 搜尋和篩選功能
+- 模型元資料顯示（大小、格式、上傳日期）
+- 無需完整載入的快速預覽
+
+**導覽與組織**
+- 在多個載入模型間切換
+- 資料夾/類別組織
+- 最近模型歷史記錄
+- 收藏/書籤系統
+
+### 💾 **下載** - 匯出功能
+**多格式匯出**
+- 下載原始上傳格式
+- 基本格式轉換（glTF ↔ OBJ）
+- 匯出已套用的修改
+- 批量下載多個模型
+
+**匯出選項**
+- 不同品質/壓縮設置
+- 包含/排除紋理選項
+- 下載檔案的自訂命名
+- 大型匯出的進度追蹤
+
+**分享功能**
+- 為特定模型生成可分享的 URL
+- 將模型配置匯出為 JSON
+- 建立可分享的截圖/縮圖
+- 外部網站的嵌入代碼
+
+### 支援基礎設施
+
+### 🔧 **狀態管理與持久化**
+- 設置 Zustand 進行全域應用狀態管理
+- 管理選擇、材質、變換和載入的模型
+- 實作所有修改的還原/重做功能
+- 將所有資料儲存至 localStorage（階段二）/ 雲端（階段三）
+- 處理瀏覽器儲存限制和清理
+
+### 🎨 **使用者介面**
+- 工具和選項的浮動控制面板
+- 桌面/平板/行動裝置響應式設計
+- 鍵盤快捷鍵（Delete、Ctrl+Z、空白鍵等）
+- 右鍵選單
+- 行動裝置觸控手勢
+- 進度指示器和載入狀態
+
+### ⚡ **效能與優化**
+- 針對複雜建築模型優化渲染
+- 為大型場景實作視錐剔除
+- 多載入模型的記憶體管理
+- 模型畫廊縮圖的延遲載入
+- 高效模型切換，避免記憶體洩漏
+
+### ✅ **階段二成功標準**
+- 使用者能上傳並在多個 CAD 模型間切換
+- 材質和變換修改功能順暢運作
+- 所有變更在瀏覽器會話間持續保存
+- 修改模型的下載功能正常運作
+- 具觸控互動的行動響應式
+- 畫廊檢視有效顯示模型預覽
+
+---
+
+## 🎖️ 階段三：完整平台
+**目標：「具備完整後端的生產就緒平台」**
+
+### 完整技術堆疊
+```
+前端：Next.js 14 + React Three Fiber
+後端：Supabase（驗證、資料庫、儲存）
+APIs：Node.js 用於檔案轉換
+即時功能：Supabase Realtime
+進階功能：物理、動畫、協作
+```
+
+### 後端基礎
+**Supabase 整合**
+- 設置 Supabase 專案（驗證、資料庫、儲存）
+- 實作 OAuth 身份驗證
+- 建立資料庫架構
+- 設置行級安全政策
+- 將 localStorage 遷移至雲端
+
+**檔案管理系統**
+- 3D 模型的雲端儲存
+- 自動縮圖生成
+- 檔案版本控制系統
+- 批量上傳功能
+- CDN 優化
+
+### 使用者與專案管理
+**使用者系統**
+- 使用者個人檔案和偏好設定
+- 專案建立和管理
+- 模型的資料夾組織
+- 使用者儀表板和分析
+- 帳戶設定
+
+**協作功能**
+- 與團隊成員共享專案
+- 權限層級（檢視、編輯、管理）
+- 即時游標追蹤
+- 即時修改同步
+- 評論和回饋系統
+
+### 進階 3D 功能
+**格式轉換系統**
+- 伺服器端轉換 APIs
+- 重度處理的佇列系統
+- 轉換進度追蹤
+- 批量轉換功能
+- 格式優化設定
+
+**專業 3D 工具**
+- 圖層管理系統
+- 進階材質（次表面散射、發光）
+- 基本物理模擬
+- 動畫時間軸
+- 專業測量工具
+
+### 生產完善
+**效能與可擴展性**
+- 實作模型 LOD
+- 大型場景的漸進式載入
+- 記憶體優化
+- 全球效能的 CDN 設置
+- 錯誤監控和日誌記錄
+
+**企業功能**
+- 團隊管理儀表板
+- 使用分析和報告
+- 整合的 API 存取
+- 白標客製化
+- 文檔和入門指導
+
+### ✅ **階段三成功標準**
+- 多使用者協作功能無縫運作
+- 格式轉換管道運作正常
+- 生產就緒的效能表現
+
+---
+
+## 🔧 技術考量
+
+### 階段間依賴關係
+- **階段一 → 二**：需要穩固的模型載入管道
+- **階段二 → 三**：本地狀態管理必須準備好雲端遷移
+- 每個階段在進入下一階段前必須完全功能正常
+
+### 效能目標
+- **幀率**：中階裝置 60fps
+- **載入時間**：標準模型 <3 秒
+- **檔案大小**：每個優化模型 <50MB
+- **瀏覽器支援**：Chrome 90+、Safari 14+
+
+### 風險緩解
+- 早期使用真實 CAD 模型進行測試（階段一）
+- 整個開發過程中進行效能測試
+- 每個階段後進行使用者測試
+- 複雜功能的備案計劃
+
+### 檔案格式策略
+- **主要格式**：glTF（網頁優化）
+- **輸入格式**：支援來自 CAD 的 OBJ、FBX
+- **匯出選項**：glTF、OBJ、FBX、STL 選項
+- **轉換**：伺服器端處理
+
+---
+
+## 📊 成功指標摘要
+
+| 階段 | 關鍵指標 |
+|-------|-------------|
+| **階段一** | ✅ 模型載入功能正常<br/>✅ Rhino 匯出管道<br/>✅ 基本 3D 互動 |
+| **階段二** | ✅ 材質/變換修改<br/>✅ 本地持久化<br/>✅ 行動裝置相容性 |
+| **階段三** | ✅ 多使用者協作<br/>✅ 格式轉換<br/>✅ 生產效能 |
