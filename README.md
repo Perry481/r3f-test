@@ -1,36 +1,227 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏗️ 3D CAD Platform - Phase 1 POC
 
-## Getting Started
+A modern 3D CAD model visualization platform built with Next.js 14 and React Three Fiber.
 
-First, run the development server:
+## 🚀 Features Completed (Phase 1)
+
+✅ **Foundation Setup**
+
+- Next.js 14 with TypeScript and Tailwind CSS
+- React Three Fiber for 3D rendering
+- Organized component structure
+
+✅ **3D Scene Management**
+
+- Canvas component with professional lighting setup
+- OrbitControls for intuitive camera movement
+- Environment mapping and shadows
+- Responsive grid system
+
+✅ **Test Objects & Interactions**
+
+- Animated test objects (cube, sphere, torus)
+- 60fps performance optimization
+- Interactive controls overlay
+
+✅ **Model Loading Pipeline**
+
+- ModelViewer component for glTF models
+- Auto-centering and scaling
+- Error handling and loading states
+- Shadow casting support
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js 14, React 19, TypeScript
+- **3D Engine**: React Three Fiber (@react-three/fiber)
+- **3D Utilities**: Drei (@react-three/drei)
+- **Styling**: Tailwind CSS
+- **Deployment**: Vercel-ready
+
+## 🚦 Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- npm or yarn
+
+### Installation
+
+1. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+2. **Start development server**
+
+   ```bash
+   npm run dev
+   ```
+
+3. **Open browser**
+   Navigate to `http://localhost:3000`
+
+### Available Scripts
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run dev        # Start development server with Turbopack
+npm run build      # Build for production
+npm run start      # Start production server
+npm run lint       # Run ESLint
+npm run type-check # TypeScript type checking
+npm run preview    # Build and preview locally
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📁 Project Structure
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+src/
+├── app/
+│   ├── layout.tsx          # Root layout
+│   ├── page.tsx            # Home page with 3D viewer
+│   └── globals.css         # Global styles
+├── components/
+│   └── 3d/
+│       ├── Scene.tsx       # Main 3D canvas with lighting
+│       ├── TestObjects.tsx # Animated test primitives
+│       ├── ModelViewer.tsx # glTF model loader
+│       └── Viewer3D.tsx    # Main 3D container
+├── lib/                    # Utility functions
+└── types/                  # TypeScript definitions
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🎮 Controls
 
-## Learn More
+- **Left Click + Drag**: Rotate camera
+- **Right Click + Drag**: Pan view
+- **Mouse Wheel**: Zoom in/out
+- **Reset**: Double-click to reset view
 
-To learn more about Next.js, take a look at the following resources:
+## 🔧 Next Steps (Phase 2)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Week 1-2: Interactive Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- [ ] Material system with PBR textures
+- [ ] Transform controls (move, rotate, scale)
+- [ ] Object selection with highlighting
+- [ ] State management with Zustand
 
-## Deploy on Vercel
+### CAD Model Testing
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- [ ] Test Rhino → glTF export workflow
+- [ ] Optimize export settings
+- [ ] Handle large architectural models
+- [ ] Performance benchmarking
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📊 Performance Targets
+
+- **Framerate**: 60fps on mid-range devices ✅
+- **Load Times**: <3 seconds for standard models
+- **File Sizes**: <50MB per model optimized
+- **Browser Support**: Chrome 90+, Safari 14+
+
+## 🚀 Deployment
+
+### Vercel (Recommended)
+
+1. **Connect to Vercel**
+
+   ```bash
+   npx vercel
+   ```
+
+2. **Auto-deploy on push**
+   - Connect GitHub repository
+   - Automatic deployments on main branch
+
+### Manual Deployment
+
+1. **Build project**
+
+   ```bash
+   npm run build
+   ```
+
+2. **Deploy `out/` folder** to your hosting service
+
+## 🧪 Testing CAD Models
+
+### Supported Formats
+
+- **Primary**: glTF 2.0 (.gltf, .glb)
+- **Textures**: PBR materials (metalness, roughness, normal maps)
+- **Compression**: Draco geometry compression supported
+
+### Testing with Sample Models
+
+1. Place `.gltf` or `.glb` files in `public/models/`
+2. Update `Viewer3D` component:
+   ```tsx
+   <Viewer3D modelUrl="/models/your-model.glb" showTestObjects={false} />
+   ```
+
+### Rhino Export Settings (For Drik)
+
+- Export Format: glTF 2.0
+- Include Materials: Yes
+- Texture Resolution: 1024x1024 max
+- Enable Draco Compression: Yes
+- Weld Vertices: Yes
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**Models not loading:**
+
+- Check file path in `public/` folder
+- Verify glTF format validity
+- Check browser console for errors
+
+**Performance issues:**
+
+- Reduce texture sizes
+- Enable Draco compression
+- Use LOD (Level of Detail) for complex models
+
+**TypeScript errors:**
+
+```bash
+npm run type-check
+```
+
+## 📈 Roadmap
+
+### Phase 1: POC ✅ (Current)
+
+- Basic 3D scene and model loading
+
+### Phase 2: MVP (3-4 weeks)
+
+- Interactive model editing
+- Material system
+- Local persistence
+
+### Phase 3: Platform (6-8 weeks)
+
+- Multi-user collaboration
+- Cloud backend (Supabase)
+- Format conversion pipeline
+
+## 🤝 Contributing
+
+1. Follow the established component structure
+2. Run type-checking before commits
+3. Test with various model complexities
+4. Document performance implications
+
+## 📝 License
+
+Private project for CAD platform development.
+
+---
+
+**Phase 1 Status**: ✅ **COMPLETE** - Ready for CAD model testing!
+
+Next: Begin Phase 2 interactive features development.
