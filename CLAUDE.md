@@ -353,3 +353,65 @@ Advanced: Physics, animations, collaboration
 | **Phase 3** | ✅ Multi-user collaboration<br/>✅ Format conversion<br/>✅ Production performance       |
 
 ---
+
+## 🎨 V0 Landing Page Integration
+
+Successfully integrated a v0-generated landing page as the main index page while preserving the 3D workspace functionality.
+
+### Integration Process
+
+**Project Structure Changes:**
+- Moved existing 3D viewer from `/` (root) to `/workspace` route
+- Replaced root page with v0 landing page design
+- Maintained all existing 3D functionality in workspace
+
+**Key Files Modified:**
+- `src/app/page.tsx` - New landing page with hero, features, CTA, footer sections
+- `src/app/workspace/page.tsx` - Moved 3D CAD viewer here
+- `src/app/layout.tsx` - **Critical Fix**: Removed `overflow-hidden` and `h-full` classes that prevented scrolling
+- `src/app/globals.css` - Added CSS variables and animations for landing page styling
+- `src/components/ui/button.tsx` - Added from v0 project for UI consistency
+- `src/components/brick-building-animation.tsx` - Custom animated component for hero section
+- `src/lib/utils.ts` - Utility functions for CSS class merging
+
+**Dependencies Added:**
+```bash
+npm install clsx tailwind-merge class-variance-authority @radix-ui/react-slot tailwindcss-animate
+```
+
+**Critical Fixes Applied:**
+1. **Scrolling Issue**: Removed `overflow-hidden` from body in layout.tsx that was preventing page scrolling
+2. **CSS Variables**: Updated globals.css with proper HSL color values for Tailwind CSS v4 compatibility
+3. **Navigation**: Added proper routing between landing page (/) and workspace (/workspace)
+
+**Current Navigation Flow:**
+- `/` - Landing page with animated hero section and call-to-action buttons
+- `/workspace` - 3D CAD viewer with "Back to Home" navigation
+
+### Landing Page Features
+
+**Hero Section:**
+- Animated text with staggered entrance effects
+- Brick building animation cycling through 2D → AI Processing → 3D phases
+- Call-to-action button linking to workspace
+
+**Features Section:**
+- Three-column layout explaining the 2D to 3D conversion process
+- Clean white background with orange accent colors
+
+**Call-to-Action Section:**
+- Orange gradient background
+- Secondary CTA button for workspace access
+
+**Footer:**
+- Dark theme with navigation links
+- Consistent branding and copyright
+
+**Animations:**
+- Custom CSS keyframes for slide-stagger effects
+- Brick building component with phase transitions
+- Hover effects on buttons and links
+
+This integration maintains the existing Phase 1 POC functionality while providing a professional landing experience for users.
+
+---
