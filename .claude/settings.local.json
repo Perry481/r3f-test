@@ -4,7 +4,8 @@
       "Read(//c/Users/imd10/Downloads/2d-to-3d-animation/**)",
       "Bash(mkdir:*)",
       "Bash(npm install:*)",
-      "mcp__sequential-thinking__sequentialthinking"
+      "mcp__sequential-thinking__sequentialthinking",
+      "Read(//c/Users/imd10/Pictures/Screenshots/**)"
     ],
     "deny": [],
     "ask": []

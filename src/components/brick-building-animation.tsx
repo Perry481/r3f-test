@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect, useState, Suspense, useRef } from "react";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 
 // Component for the extruding cube animation
 function ExtrudingCube({ isActive }: { isActive: boolean }) {
-  const meshRef = useRef<THREE.Mesh>(null);
   const [extrusionProgress, setExtrusionProgress] = useState(0);
 
   useEffect(() => {
@@ -37,9 +36,175 @@ function ExtrudingCube({ isActive }: { isActive: boolean }) {
 
   return (
     <group>
-      {/* Hollow extruding cube - wireframe style */}
-      <mesh ref={meshRef} position={[0, height / 2, 0]}>
-        <boxGeometry args={[2, height, 2]} />
+      {/* Dotted line edges for extruding cube */}
+      {extrusionProgress > 0.1 && (
+        <>
+          {/* Vertical edges with dotted lines */}
+          {[
+            [-1, -1],
+            [1, -1],
+            [1, 1],
+            [-1, 1],
+          ].map(([x, z], i) => {
+            const segments = [];
+            const dashLength = 0.15;
+            const gapLength = 0.08;
+
+            for (let y = -0.5; y < height - 0.5; y += dashLength + gapLength) {
+              const start = new THREE.Vector3(x, y, z);
+              const end = new THREE.Vector3(
+                x,
+                Math.min(y + dashLength, height - 0.5),
+                z
+              );
+              segments.push(start, end);
+            }
+
+            const geometry = new THREE.BufferGeometry().setFromPoints(segments);
+
+            return (
+              <lineSegments key={i} geometry={geometry}>
+                <lineBasicMaterial color="#334155" linewidth={2} />
+              </lineSegments>
+            );
+          })}
+
+          {/* Bottom horizontal edges */}
+          {[
+            { start: [-1, -0.5, -1], end: [1, -0.5, -1] },
+            { start: [1, -0.5, -1], end: [1, -0.5, 1] },
+            { start: [1, -0.5, 1], end: [-1, -0.5, 1] },
+            { start: [-1, -0.5, 1], end: [-1, -0.5, -1] },
+          ].map(({ start, end }, i) => {
+            const segments = [];
+            const dashLength = 0.15;
+            const gapLength = 0.08;
+            const totalDistance = Math.sqrt(
+              Math.pow(end[0] - start[0], 2) +
+                Math.pow(end[1] - start[1], 2) +
+                Math.pow(end[2] - start[2], 2)
+            );
+
+            for (
+              let t = 0;
+              t < 1;
+              t += (dashLength + gapLength) / totalDistance
+            ) {
+              const dashEnd = Math.min(t + dashLength / totalDistance, 1);
+              const segmentStart = new THREE.Vector3(
+                start[0] + (end[0] - start[0]) * t,
+                start[1] + (end[1] - start[1]) * t,
+                start[2] + (end[2] - start[2]) * t
+              );
+              const segmentEnd = new THREE.Vector3(
+                start[0] + (end[0] - start[0]) * dashEnd,
+                start[1] + (end[1] - start[1]) * dashEnd,
+                start[2] + (end[2] - start[2]) * dashEnd
+              );
+              segments.push(segmentStart, segmentEnd);
+            }
+
+            const geometry = new THREE.BufferGeometry().setFromPoints(segments);
+
+            return (
+              <lineSegments key={`bottom-${i}`} geometry={geometry}>
+                <lineBasicMaterial color="#334155" linewidth={2} />
+              </lineSegments>
+            );
+          })}
+
+          {/* Top horizontal edges (when tall enough) */}
+          {height > 0.5 &&
+            [
+              { start: [-1, height - 0.5, -1], end: [1, height - 0.5, -1] },
+              { start: [1, height - 0.5, -1], end: [1, height - 0.5, 1] },
+              { start: [1, height - 0.5, 1], end: [-1, height - 0.5, 1] },
+              { start: [-1, height - 0.5, 1], end: [-1, height - 0.5, -1] },
+            ].map(({ start, end }, i) => {
+              const segments = [];
+              const dashLength = 0.15;
+              const gapLength = 0.08;
+              const totalDistance = Math.sqrt(
+                Math.pow(end[0] - start[0], 2) +
+                  Math.pow(end[1] - start[1], 2) +
+                  Math.pow(end[2] - start[2], 2)
+              );
+
+              for (
+                let t = 0;
+                t < 1;
+                t += (dashLength + gapLength) / totalDistance
+              ) {
+                const dashEnd = Math.min(t + dashLength / totalDistance, 1);
+                const segmentStart = new THREE.Vector3(
+                  start[0] + (end[0] - start[0]) * t,
+                  start[1] + (end[1] - start[1]) * t,
+                  start[2] + (end[2] - start[2]) * t
+                );
+                const segmentEnd = new THREE.Vector3(
+                  start[0] + (end[0] - start[0]) * dashEnd,
+                  start[1] + (end[1] - start[1]) * dashEnd,
+                  start[2] + (end[2] - start[2]) * dashEnd
+                );
+                segments.push(segmentStart, segmentEnd);
+              }
+
+              const geometry = new THREE.BufferGeometry().setFromPoints(
+                segments
+              );
+
+              return (
+                <lineSegments key={`top-${i}`} geometry={geometry}>
+                  <lineBasicMaterial color="#334155" linewidth={2} />
+                </lineSegments>
+              );
+            })}
+        </>
+      )}
+    </group>
+  );
+}
+
+// Component for the spinning cube in Phase 3
+function SpinningCube({ isActive }: { isActive: boolean }) {
+  const groupRef = useRef<THREE.Group>(null);
+  const [spinSpeed, setSpinSpeed] = useState(0);
+
+  useEffect(() => {
+    if (isActive) {
+      setSpinSpeed(8); // Start with fast spin immediately when phase 3 appears
+      const startTime = Date.now();
+      const duration = 2500; // 2.5 seconds to slow down
+
+      const animate = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+
+        // Ease out the spin speed from 8 to 0.5
+        const currentSpeed = 8 - progress * 7.5;
+        setSpinSpeed(Math.max(currentSpeed, 0.5));
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        }
+      };
+      animate();
+    } else {
+      setSpinSpeed(0); // Stop spinning when not active
+    }
+  }, [isActive]);
+
+  useFrame(() => {
+    if (groupRef.current && isActive) {
+      groupRef.current.rotation.y += spinSpeed * 0.01;
+    }
+  });
+
+  return (
+    <group ref={groupRef}>
+      {/* 3D Model - Hollow cube positioned to match Phase 2 final position */}
+      <mesh position={[0, 0.5, 0]}>
+        <boxGeometry args={[2, 2, 2]} />
         <meshStandardMaterial
           color="#334155"
           wireframe={true}
@@ -47,56 +212,55 @@ function ExtrudingCube({ isActive }: { isActive: boolean }) {
         />
       </mesh>
 
-      {/* Add edge lines for better visibility */}
-      {extrusionProgress > 0.1 && (
-        <>
-          {/* Vertical edges */}
-          <mesh position={[-1, height / 2, -1]}>
-            <cylinderGeometry args={[0.02, 0.02, height]} />
+      {/* Additional edge definition for better visibility */}
+      <group>
+        {/* Vertical edges */}
+        {[
+          [-1, -1],
+          [1, -1],
+          [1, 1],
+          [-1, 1],
+        ].map(([x, z], i) => (
+          <mesh key={i} position={[x, 0.5, z]}>
+            <cylinderGeometry args={[0.03, 0.03, 2]} />
             <meshStandardMaterial color="#334155" />
           </mesh>
-          <mesh position={[1, height / 2, -1]}>
-            <cylinderGeometry args={[0.02, 0.02, height]} />
-            <meshStandardMaterial color="#334155" />
-          </mesh>
-          <mesh position={[1, height / 2, 1]}>
-            <cylinderGeometry args={[0.02, 0.02, height]} />
-            <meshStandardMaterial color="#334155" />
-          </mesh>
-          <mesh position={[-1, height / 2, 1]}>
-            <cylinderGeometry args={[0.02, 0.02, height]} />
-            <meshStandardMaterial color="#334155" />
-          </mesh>
+        ))}
 
-          {/* Horizontal edges for top */}
-          {height > 0.5 && (
-            <>
-              <mesh position={[0, height, -1]} rotation={[0, 0, Math.PI / 2]}>
-                <cylinderGeometry args={[0.02, 0.02, 2]} />
-                <meshStandardMaterial color="#334155" />
-              </mesh>
-              <mesh position={[0, height, 1]} rotation={[0, 0, Math.PI / 2]}>
-                <cylinderGeometry args={[0.02, 0.02, 2]} />
-                <meshStandardMaterial color="#334155" />
-              </mesh>
-              <mesh
-                position={[-1, height, 0]}
-                rotation={[0, Math.PI / 2, Math.PI / 2]}
-              >
-                <cylinderGeometry args={[0.02, 0.02, 2]} />
-                <meshStandardMaterial color="#334155" />
-              </mesh>
-              <mesh
-                position={[1, height, 0]}
-                rotation={[0, Math.PI / 2, Math.PI / 2]}
-              >
-                <cylinderGeometry args={[0.02, 0.02, 2]} />
-                <meshStandardMaterial color="#334155" />
-              </mesh>
-            </>
-          )}
-        </>
-      )}
+        {/* Top horizontal edges */}
+        {[
+          { pos: [0, 1.5, -1], rot: [0, 0, Math.PI / 2] },
+          { pos: [0, 1.5, 1], rot: [0, 0, Math.PI / 2] },
+          { pos: [-1, 1.5, 0], rot: [0, Math.PI / 2, Math.PI / 2] },
+          { pos: [1, 1.5, 0], rot: [0, Math.PI / 2, Math.PI / 2] },
+        ].map(({ pos, rot }, i) => (
+          <mesh
+            key={i}
+            position={pos as [number, number, number]}
+            rotation={rot as [number, number, number]}
+          >
+            <cylinderGeometry args={[0.03, 0.03, 2]} />
+            <meshStandardMaterial color="#334155" />
+          </mesh>
+        ))}
+
+        {/* Bottom horizontal edges */}
+        {[
+          { pos: [0, -0.5, -1], rot: [0, 0, Math.PI / 2] },
+          { pos: [0, -0.5, 1], rot: [0, 0, Math.PI / 2] },
+          { pos: [-1, -0.5, 0], rot: [0, Math.PI / 2, Math.PI / 2] },
+          { pos: [1, -0.5, 0], rot: [0, Math.PI / 2, Math.PI / 2] },
+        ].map(({ pos, rot }, i) => (
+          <mesh
+            key={i}
+            position={pos as [number, number, number]}
+            rotation={rot as [number, number, number]}
+          >
+            <cylinderGeometry args={[0.03, 0.03, 2]} />
+            <meshStandardMaterial color="#334155" />
+          </mesh>
+        ))}
+      </group>
     </group>
   );
 }
@@ -375,7 +539,7 @@ export function BrickBuildingAnimation() {
                 }
               >
                 <Canvas
-                  camera={{ position: [3, 3, 3], fov: 60 }}
+                  camera={{ position: [4, 3, 4], fov: 50 }}
                   className="rounded-lg"
                 >
                   {/* Lighting */}
@@ -389,65 +553,8 @@ export function BrickBuildingAnimation() {
                   />
                   <directionalLight position={[-5, 5, -5]} intensity={0.3} />
 
-                  {/* 3D Model - Hollow cube that user can interact with */}
-                  <mesh position={[0, 0, 0]}>
-                    <boxGeometry args={[2, 2, 2]} />
-                    <meshStandardMaterial
-                      color="#334155"
-                      wireframe={true}
-                      wireframeLinewidth={2}
-                    />
-                  </mesh>
-
-                  {/* Additional edge definition for better visibility */}
-                  <group>
-                    {/* Vertical edges */}
-                    {[
-                      [-1, -1],
-                      [1, -1],
-                      [1, 1],
-                      [-1, 1],
-                    ].map(([x, z], i) => (
-                      <mesh key={i} position={[x, 0, z]}>
-                        <cylinderGeometry args={[0.03, 0.03, 2]} />
-                        <meshStandardMaterial color="#334155" />
-                      </mesh>
-                    ))}
-
-                    {/* Top horizontal edges */}
-                    {[
-                      { pos: [0, 1, -1], rot: [0, 0, Math.PI / 2] },
-                      { pos: [0, 1, 1], rot: [0, 0, Math.PI / 2] },
-                      { pos: [-1, 1, 0], rot: [0, Math.PI / 2, Math.PI / 2] },
-                      { pos: [1, 1, 0], rot: [0, Math.PI / 2, Math.PI / 2] },
-                    ].map(({ pos, rot }, i) => (
-                      <mesh
-                        key={i}
-                        position={pos as [number, number, number]}
-                        rotation={rot as [number, number, number]}
-                      >
-                        <cylinderGeometry args={[0.03, 0.03, 2]} />
-                        <meshStandardMaterial color="#334155" />
-                      </mesh>
-                    ))}
-
-                    {/* Bottom horizontal edges */}
-                    {[
-                      { pos: [0, -1, -1], rot: [0, 0, Math.PI / 2] },
-                      { pos: [0, -1, 1], rot: [0, 0, Math.PI / 2] },
-                      { pos: [-1, -1, 0], rot: [0, Math.PI / 2, Math.PI / 2] },
-                      { pos: [1, -1, 0], rot: [0, Math.PI / 2, Math.PI / 2] },
-                    ].map(({ pos, rot }, i) => (
-                      <mesh
-                        key={i}
-                        position={pos as [number, number, number]}
-                        rotation={rot as [number, number, number]}
-                      >
-                        <cylinderGeometry args={[0.03, 0.03, 2]} />
-                        <meshStandardMaterial color="#334155" />
-                      </mesh>
-                    ))}
-                  </group>
+                  {/* Spinning cube component */}
+                  <SpinningCube isActive={animationPhase === 2} />
 
                   {/* Interactive controls */}
                   <OrbitControls
