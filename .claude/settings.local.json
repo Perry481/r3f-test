@@ -3,7 +3,8 @@
     "allow": [
       "Read(//c/Users/imd10/Downloads/2d-to-3d-animation/**)",
       "Bash(mkdir:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "mcp__sequential-thinking__sequentialthinking"
     ],
     "deny": [],
     "ask": []

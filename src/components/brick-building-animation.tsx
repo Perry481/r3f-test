@@ -1,132 +1,472 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense, useRef } from "react";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls } from "@react-three/drei";
+import * as THREE from "three";
+
+// Component for the extruding cube animation
+function ExtrudingCube({ isActive }: { isActive: boolean }) {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const [extrusionProgress, setExtrusionProgress] = useState(0);
+
+  useEffect(() => {
+    if (isActive) {
+      setExtrusionProgress(0);
+      const startTime = Date.now();
+      const duration = 3500; // 3.5 seconds for the extrusion
+
+      const animate = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+
+        // Easing function for smooth animation
+        const eased = 1 - Math.pow(1 - progress, 3);
+        setExtrusionProgress(eased);
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        }
+      };
+      animate();
+    }
+  }, [isActive]);
+
+  // Calculate the height based on progress (from 0.1 to 2)
+  const height = 0.1 + extrusionProgress * 1.9;
+
+  return (
+    <group>
+      {/* Hollow extruding cube - wireframe style */}
+      <mesh ref={meshRef} position={[0, height / 2, 0]}>
+        <boxGeometry args={[2, height, 2]} />
+        <meshStandardMaterial
+          color="#334155"
+          wireframe={true}
+          wireframeLinewidth={2}
+        />
+      </mesh>
+
+      {/* Add edge lines for better visibility */}
+      {extrusionProgress > 0.1 && (
+        <>
+          {/* Vertical edges */}
+          <mesh position={[-1, height / 2, -1]}>
+            <cylinderGeometry args={[0.02, 0.02, height]} />
+            <meshStandardMaterial color="#334155" />
+          </mesh>
+          <mesh position={[1, height / 2, -1]}>
+            <cylinderGeometry args={[0.02, 0.02, height]} />
+            <meshStandardMaterial color="#334155" />
+          </mesh>
+          <mesh position={[1, height / 2, 1]}>
+            <cylinderGeometry args={[0.02, 0.02, height]} />
+            <meshStandardMaterial color="#334155" />
+          </mesh>
+          <mesh position={[-1, height / 2, 1]}>
+            <cylinderGeometry args={[0.02, 0.02, height]} />
+            <meshStandardMaterial color="#334155" />
+          </mesh>
+
+          {/* Horizontal edges for top */}
+          {height > 0.5 && (
+            <>
+              <mesh position={[0, height, -1]} rotation={[0, 0, Math.PI / 2]}>
+                <cylinderGeometry args={[0.02, 0.02, 2]} />
+                <meshStandardMaterial color="#334155" />
+              </mesh>
+              <mesh position={[0, height, 1]} rotation={[0, 0, Math.PI / 2]}>
+                <cylinderGeometry args={[0.02, 0.02, 2]} />
+                <meshStandardMaterial color="#334155" />
+              </mesh>
+              <mesh
+                position={[-1, height, 0]}
+                rotation={[0, Math.PI / 2, Math.PI / 2]}
+              >
+                <cylinderGeometry args={[0.02, 0.02, 2]} />
+                <meshStandardMaterial color="#334155" />
+              </mesh>
+              <mesh
+                position={[1, height, 0]}
+                rotation={[0, Math.PI / 2, Math.PI / 2]}
+              >
+                <cylinderGeometry args={[0.02, 0.02, 2]} />
+                <meshStandardMaterial color="#334155" />
+              </mesh>
+            </>
+          )}
+        </>
+      )}
+    </group>
+  );
+}
 
 export function BrickBuildingAnimation() {
-  const [animationPhase, setAnimationPhase] = useState(0)
+  const [animationPhase, setAnimationPhase] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setAnimationPhase((prev) => (prev + 1) % 3)
-    }, 3000)
+      setAnimationPhase((prev) => (prev + 1) % 3);
+    }, 4000);
 
-    return () => clearInterval(interval)
-  }, [])
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="flex items-center justify-center w-96 h-96 pointer-events-none">
       <div className="relative w-full h-full">
-        {/* 2D Blueprint Phase */}
+        {/* Phase 1: 2D Orthographic Views */}
         <div
           className={`absolute inset-0 transition-all duration-1000 ${
-            animationPhase === 0 ? "opacity-100 scale-100" : "opacity-0 scale-95"
+            animationPhase === 0
+              ? "opacity-100 scale-100"
+              : "opacity-0 scale-95"
           }`}
         >
-          <div className="w-full h-full bg-blue-50 border-2 border-blue-300 rounded-lg p-8 flex flex-col items-center justify-center">
-            <div className="text-blue-600 font-bold mb-4">2D CAD Drawing</div>
-            {/* Blueprint lines */}
-            <div className="space-y-2 w-full">
-              <div className="h-1 bg-blue-400 w-3/4 mx-auto animate-pulse"></div>
-              <div className="h-1 bg-blue-400 w-full animate-pulse delay-100"></div>
-              <div className="h-1 bg-blue-400 w-2/3 mx-auto animate-pulse delay-200"></div>
-              <div className="h-1 bg-blue-400 w-5/6 mx-auto animate-pulse delay-300"></div>
+          <div className="w-full h-full bg-slate-50 border-2 border-slate-300 rounded-lg p-6 flex flex-col items-center justify-center">
+            <div className="text-slate-700 font-bold mb-6">
+              2D Orthographic Views
             </div>
-            <div className="mt-4 grid grid-cols-4 gap-1 w-32">
-              {Array.from({ length: 16 }).map((_, i) => (
+
+            {/* Three orthographic views layout */}
+            <div className="grid grid-cols-2 gap-6 items-center">
+              {/* Top View */}
+              <div className="flex flex-col items-center">
                 <div
-                  key={i}
-                  className="w-6 h-3 border border-blue-300 animate-pulse"
-                  style={{ animationDelay: `${i * 50}ms` }}
-                ></div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Transformation Phase */}
-        <div
-          className={`absolute inset-0 transition-all duration-1000 ${
-            animationPhase === 1 ? "opacity-100 scale-100" : "opacity-0 scale-95"
-          }`}
-        >
-          <div className="w-full h-full flex items-center justify-center">
-            <div className="text-orange-600 font-bold mb-4 absolute top-8">AI Processing...</div>
-            <div className="relative">
-              {/* Spinning gears effect */}
-              <div className="w-16 h-16 border-4 border-orange-300 border-t-orange-600 rounded-full animate-spin"></div>
-              <div className="absolute top-2 left-2 w-12 h-12 border-4 border-slate-300 border-t-slate-600 rounded-full animate-spin animate-reverse"></div>
-
-              {/* Floating blueprint pieces */}
-              <div className="absolute -top-8 -left-8 w-4 h-4 bg-blue-400 animate-bounce"></div>
-              <div className="absolute -top-4 left-8 w-3 h-3 bg-blue-400 animate-bounce delay-200"></div>
-              <div className="absolute top-8 -right-4 w-2 h-2 bg-blue-400 animate-bounce delay-400"></div>
-            </div>
-          </div>
-        </div>
-
-        {/* 3D Building Phase */}
-        <div
-          className={`absolute inset-0 transition-all duration-1000 ${
-            animationPhase === 2 ? "opacity-100 scale-100" : "opacity-0 scale-95"
-          }`}
-        >
-          <div className="w-full h-full flex items-center justify-center">
-            <div className="text-orange-600 font-bold mb-4 absolute top-8">3D CAD Model</div>
-
-            {/* 3D Building Structure */}
-            <div className="relative perspective-1000">
-              <div className="transform-gpu preserve-3d animate-float">
-                {/* Building layers - animated brick by brick */}
-                <div className="relative">
-                  {/* Foundation */}
-                  <div className="grid grid-cols-6 gap-1 mb-1">
-                    {Array.from({ length: 6 }).map((_, i) => (
-                      <div
-                        key={i}
-                        className="w-6 h-4 bg-gradient-to-b from-orange-400 to-orange-600 border border-orange-700 shadow-md animate-build-up"
-                        style={{ animationDelay: `${i * 100}ms` }}
-                      ></div>
-                    ))}
-                  </div>
-
-                  {/* Second layer */}
-                  <div className="grid grid-cols-6 gap-1 mb-1 ml-3">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <div
-                        key={i}
-                        className="w-6 h-4 bg-gradient-to-b from-orange-500 to-orange-700 border border-orange-800 shadow-md animate-build-up"
-                        style={{ animationDelay: `${(i + 6) * 100}ms` }}
-                      ></div>
-                    ))}
-                  </div>
-
-                  {/* Third layer */}
-                  <div className="grid grid-cols-6 gap-1 mb-1">
-                    {Array.from({ length: 6 }).map((_, i) => (
-                      <div
-                        key={i}
-                        className="w-6 h-4 bg-gradient-to-b from-orange-400 to-orange-600 border border-orange-700 shadow-md animate-build-up"
-                        style={{ animationDelay: `${(i + 11) * 100}ms` }}
-                      ></div>
-                    ))}
-                  </div>
-
-                  {/* Top layer */}
-                  <div className="grid grid-cols-4 gap-1 ml-6">
-                    {Array.from({ length: 4 }).map((_, i) => (
-                      <div
-                        key={i}
-                        className="w-6 h-4 bg-gradient-to-b from-orange-500 to-orange-700 border border-orange-800 shadow-md animate-build-up"
-                        style={{ animationDelay: `${(i + 17) * 100}ms` }}
-                      ></div>
-                    ))}
-                  </div>
+                  className="text-xs text-slate-500 mb-2 animate-fade-in"
+                  style={{ animationDelay: "0.2s" }}
+                >
+                  TOP
                 </div>
+                <svg
+                  width="80"
+                  height="60"
+                  viewBox="0 0 80 60"
+                  className="border border-slate-300 bg-white"
+                >
+                  {/* L-bracket top view */}
+                  <rect
+                    x="15"
+                    y="15"
+                    width="50"
+                    height="15"
+                    fill="none"
+                    stroke="#334155"
+                    strokeWidth="1.5"
+                    className="animate-draw-lines"
+                    style={{ animationDelay: "0.4s" }}
+                  />
+                  <rect
+                    x="15"
+                    y="30"
+                    width="15"
+                    height="15"
+                    fill="none"
+                    stroke="#334155"
+                    strokeWidth="1.5"
+                    className="animate-draw-lines"
+                    style={{ animationDelay: "0.6s" }}
+                  />
+                  {/* Center lines */}
+                  <line
+                    x1="40"
+                    y1="10"
+                    x2="40"
+                    y2="50"
+                    stroke="#94A3B8"
+                    strokeWidth="0.5"
+                    strokeDasharray="2,1"
+                    className="animate-draw-lines"
+                    style={{ animationDelay: "0.8s" }}
+                  />
+                  <line
+                    x1="10"
+                    y1="22.5"
+                    x2="70"
+                    y2="22.5"
+                    stroke="#94A3B8"
+                    strokeWidth="0.5"
+                    strokeDasharray="2,1"
+                    className="animate-draw-lines"
+                    style={{ animationDelay: "1.0s" }}
+                  />
+                </svg>
               </div>
+
+              {/* Front View */}
+              <div className="flex flex-col items-center">
+                <div
+                  className="text-xs text-slate-500 mb-2 animate-fade-in"
+                  style={{ animationDelay: "1.2s" }}
+                >
+                  FRONT
+                </div>
+                <svg
+                  width="80"
+                  height="60"
+                  viewBox="0 0 80 60"
+                  className="border border-slate-300 bg-white"
+                >
+                  {/* L-bracket front view */}
+                  <rect
+                    x="15"
+                    y="15"
+                    width="50"
+                    height="30"
+                    fill="none"
+                    stroke="#334155"
+                    strokeWidth="1.5"
+                    className="animate-draw-lines"
+                    style={{ animationDelay: "1.4s" }}
+                  />
+                  <rect
+                    x="15"
+                    y="30"
+                    width="15"
+                    height="15"
+                    fill="none"
+                    stroke="#334155"
+                    strokeWidth="1.5"
+                    className="animate-draw-lines"
+                    style={{ animationDelay: "1.6s" }}
+                  />
+                  {/* Hidden lines */}
+                  <line
+                    x1="30"
+                    y1="30"
+                    x2="65"
+                    y2="30"
+                    stroke="#94A3B8"
+                    strokeWidth="0.8"
+                    strokeDasharray="3,2"
+                    className="animate-draw-lines"
+                    style={{ animationDelay: "1.8s" }}
+                  />
+                </svg>
+              </div>
+
+              {/* Side View */}
+              <div className="flex flex-col items-center col-span-2">
+                <div
+                  className="text-xs text-slate-500 mb-2 animate-fade-in"
+                  style={{ animationDelay: "2.0s" }}
+                >
+                  SIDE
+                </div>
+                <svg
+                  width="60"
+                  height="60"
+                  viewBox="0 0 60 60"
+                  className="border border-slate-300 bg-white"
+                >
+                  {/* L-bracket side view */}
+                  <rect
+                    x="15"
+                    y="15"
+                    width="15"
+                    height="30"
+                    fill="none"
+                    stroke="#334155"
+                    strokeWidth="1.5"
+                    className="animate-draw-lines"
+                    style={{ animationDelay: "2.2s" }}
+                  />
+                  <rect
+                    x="15"
+                    y="30"
+                    width="30"
+                    height="15"
+                    fill="none"
+                    stroke="#334155"
+                    strokeWidth="1.5"
+                    className="animate-draw-lines"
+                    style={{ animationDelay: "2.4s" }}
+                  />
+                </svg>
+              </div>
+            </div>
+
+            <div
+              className="mt-4 text-xs text-slate-500 animate-fade-in"
+              style={{ animationDelay: "2.6s" }}
+            >
+              Technical Drawings • All Views
+            </div>
+          </div>
+        </div>
+
+        {/* Phase 2: Extruding Square to Cube */}
+        <div
+          className={`absolute inset-0 transition-all duration-1000 ${
+            animationPhase === 1
+              ? "opacity-100 scale-100"
+              : "opacity-0 scale-95"
+          }`}
+        >
+          <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 border-2 border-slate-300 rounded-lg">
+            <div className="text-slate-700 font-bold mb-2 absolute top-6 z-10">
+              Extruding 3D Model
+            </div>
+
+            {/* R3F Canvas for extrusion animation */}
+            <div className="w-80 h-80 relative">
+              <Suspense
+                fallback={
+                  <div className="w-full h-full flex items-center justify-center">
+                    <div className="text-slate-500">Loading Animation...</div>
+                  </div>
+                }
+              >
+                <Canvas
+                  camera={{ position: [4, 3, 4], fov: 50 }}
+                  className="rounded-lg"
+                  shadows
+                >
+                  {/* Lighting */}
+                  <ambientLight intensity={0.6} />
+                  <directionalLight
+                    position={[10, 10, 5]}
+                    intensity={0.8}
+                    castShadow
+                    shadow-mapSize-width={2048}
+                    shadow-mapSize-height={2048}
+                    shadow-camera-far={50}
+                    shadow-camera-left={-10}
+                    shadow-camera-right={10}
+                    shadow-camera-top={10}
+                    shadow-camera-bottom={-10}
+                  />
+                  <directionalLight position={[-5, 5, -5]} intensity={0.3} />
+
+                  {/* Extruding cube component */}
+                  <ExtrudingCube isActive={animationPhase === 1} />
+
+                  {/* Static camera view (no controls for this phase) */}
+                </Canvas>
+              </Suspense>
+            </div>
+
+            <div className="absolute bottom-8 text-xs text-slate-500 z-10">
+              Square → Extrusion → Cube
+            </div>
+          </div>
+        </div>
+
+        {/* Phase 3: Interactive 3D Model with R3F */}
+        <div
+          className={`absolute inset-0 transition-all duration-1000 ${
+            animationPhase === 2
+              ? "opacity-100 scale-100"
+              : "opacity-0 scale-95"
+          }`}
+        >
+          <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 border-2 border-slate-300 rounded-lg">
+            <div className="text-slate-700 font-bold mb-2 absolute top-6 z-10">
+              Interactive 3D Model
+            </div>
+
+            {/* R3F Canvas */}
+            <div className="w-80 h-80 relative">
+              <Suspense
+                fallback={
+                  <div className="w-full h-full flex items-center justify-center">
+                    <div className="text-slate-500">Loading 3D Model...</div>
+                  </div>
+                }
+              >
+                <Canvas
+                  camera={{ position: [3, 3, 3], fov: 60 }}
+                  className="rounded-lg"
+                >
+                  {/* Lighting */}
+                  <ambientLight intensity={0.6} />
+                  <directionalLight
+                    position={[10, 10, 5]}
+                    intensity={0.8}
+                    castShadow
+                    shadow-mapSize-width={2048}
+                    shadow-mapSize-height={2048}
+                  />
+                  <directionalLight position={[-5, 5, -5]} intensity={0.3} />
+
+                  {/* 3D Model - Hollow cube that user can interact with */}
+                  <mesh position={[0, 0, 0]}>
+                    <boxGeometry args={[2, 2, 2]} />
+                    <meshStandardMaterial
+                      color="#334155"
+                      wireframe={true}
+                      wireframeLinewidth={2}
+                    />
+                  </mesh>
+
+                  {/* Additional edge definition for better visibility */}
+                  <group>
+                    {/* Vertical edges */}
+                    {[
+                      [-1, -1],
+                      [1, -1],
+                      [1, 1],
+                      [-1, 1],
+                    ].map(([x, z], i) => (
+                      <mesh key={i} position={[x, 0, z]}>
+                        <cylinderGeometry args={[0.03, 0.03, 2]} />
+                        <meshStandardMaterial color="#334155" />
+                      </mesh>
+                    ))}
+
+                    {/* Top horizontal edges */}
+                    {[
+                      { pos: [0, 1, -1], rot: [0, 0, Math.PI / 2] },
+                      { pos: [0, 1, 1], rot: [0, 0, Math.PI / 2] },
+                      { pos: [-1, 1, 0], rot: [0, Math.PI / 2, Math.PI / 2] },
+                      { pos: [1, 1, 0], rot: [0, Math.PI / 2, Math.PI / 2] },
+                    ].map(({ pos, rot }, i) => (
+                      <mesh
+                        key={i}
+                        position={pos as [number, number, number]}
+                        rotation={rot as [number, number, number]}
+                      >
+                        <cylinderGeometry args={[0.03, 0.03, 2]} />
+                        <meshStandardMaterial color="#334155" />
+                      </mesh>
+                    ))}
+
+                    {/* Bottom horizontal edges */}
+                    {[
+                      { pos: [0, -1, -1], rot: [0, 0, Math.PI / 2] },
+                      { pos: [0, -1, 1], rot: [0, 0, Math.PI / 2] },
+                      { pos: [-1, -1, 0], rot: [0, Math.PI / 2, Math.PI / 2] },
+                      { pos: [1, -1, 0], rot: [0, Math.PI / 2, Math.PI / 2] },
+                    ].map(({ pos, rot }, i) => (
+                      <mesh
+                        key={i}
+                        position={pos as [number, number, number]}
+                        rotation={rot as [number, number, number]}
+                      >
+                        <cylinderGeometry args={[0.03, 0.03, 2]} />
+                        <meshStandardMaterial color="#334155" />
+                      </mesh>
+                    ))}
+                  </group>
+
+                  {/* Interactive controls */}
+                  <OrbitControls
+                    enablePan={true}
+                    enableZoom={true}
+                    enableRotate={true}
+                    autoRotate={true}
+                    autoRotateSpeed={2}
+                  />
+                </Canvas>
+              </Suspense>
+            </div>
+
+            <div className="absolute bottom-8 text-xs text-slate-600 z-10">
+              Drag to rotate • Scroll to zoom • Right-click to pan
             </div>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

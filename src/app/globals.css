@@ -139,6 +139,117 @@
   }
 }
 
+/* CAD Animation Keyframes */
+@keyframes draw-lines {
+  from {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    opacity: 0;
+  }
+  to {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes extrude-line {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleX(1) perspective(500px) rotateY(-15deg);
+    opacity: 0.8;
+  }
+}
+
+@keyframes float-particle {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+    opacity: 0.7;
+  }
+  33% {
+    transform: translateY(-15px) scale(1.2);
+    opacity: 1;
+  }
+  66% {
+    transform: translateY(-5px) scale(0.9);
+    opacity: 0.8;
+  }
+}
+
+@keyframes gentle-rotate {
+  0% {
+    transform: perspective(800px) rotateX(5deg) rotateY(-10deg);
+  }
+  50% {
+    transform: perspective(800px) rotateX(10deg) rotateY(10deg);
+  }
+  100% {
+    transform: perspective(800px) rotateX(5deg) rotateY(-10deg);
+  }
+}
+
+@keyframes project-line {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 0.6;
+  }
+}
+
+@keyframes project-line-vertical {
+  from {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleY(1);
+    opacity: 0.6;
+  }
+}
+
+@keyframes construct-3d {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes build-face {
+  from {
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1) rotate(5deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
 .animate-slide-stagger-1 {
   animation: slide-stagger-1 0.6s ease-out 0.1s both;
 }
@@ -161,4 +272,46 @@
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
+}
+
+/* CAD Animation Classes */
+.animate-draw-lines {
+  animation: draw-lines 1s ease-out both;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out both;
+}
+
+.animate-extrude-line {
+  animation: extrude-line 1.2s ease-out both;
+}
+
+.animate-float-particle {
+  animation: float-particle 2s ease-in-out infinite;
+}
+
+.animate-gentle-rotate {
+  animation: gentle-rotate 6s ease-in-out infinite;
+}
+
+.animate-project-line {
+  animation: project-line 0.8s ease-out both;
+}
+
+.animate-project-line-vertical {
+  animation: project-line-vertical 0.8s ease-out both;
+}
+
+.animate-construct-3d {
+  animation: construct-3d 1s ease-out both;
+}
+
+.animate-build-face {
+  animation: build-face 0.8s ease-out both;
+}
+
+/* 3D perspective utilities */
+.perspective-1000 {
+  perspective: 1000px;
 }
