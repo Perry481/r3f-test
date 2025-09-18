@@ -202,32 +202,54 @@ function SpinningCube({ isActive }: { isActive: boolean }) {
 
   return (
     <group ref={groupRef}>
-      {/* 3D Model - Hollow cube positioned to match Phase 2 final position */}
-      <mesh position={[0, 0.5, 0]}>
-        <boxGeometry args={[2, 2, 2]} />
+      {/* Main cube frame - more transparent to show sky blue interior */}
+      <mesh position={[0, 0.5, 0]} castShadow receiveShadow>
+        <boxGeometry args={[2, 2, 2, 32, 32, 32]} />
         <meshStandardMaterial
-          color="#334155"
-          wireframe={true}
-          wireframeLinewidth={2}
+          color="#64748b"
+          metalness={0.0}
+          roughness={0.3}
+          transparent={true}
+          opacity={0.3}
+          wireframe={false}
         />
       </mesh>
 
-      {/* Additional edge definition for better visibility */}
+      {/* Premium edge definition with beveled corners */}
       <group>
-        {/* Vertical edges */}
+        {/* Vertical edges - much thinner */}
         {[
           [-1, -1],
           [1, -1],
           [1, 1],
           [-1, 1],
         ].map(([x, z], i) => (
-          <mesh key={i} position={[x, 0.5, z]}>
-            <cylinderGeometry args={[0.03, 0.03, 2]} />
-            <meshStandardMaterial color="#334155" />
+          <mesh key={i} position={[x, 0.5, z]} castShadow>
+            <cylinderGeometry args={[0.015, 0.015, 2, 8]} />
+            <meshStandardMaterial
+              color="#334155"
+              metalness={0.1}
+              roughness={0.3}
+            />
           </mesh>
         ))}
 
-        {/* Top horizontal edges */}
+        {/* Corner dots - smaller and simpler */}
+        {[
+          [-1, -0.5, -1], [1, -0.5, -1], [1, -0.5, 1], [-1, -0.5, 1],
+          [-1, 1.5, -1], [1, 1.5, -1], [1, 1.5, 1], [-1, 1.5, 1]
+        ].map(([x, y, z], i) => (
+          <mesh key={`corner-${i}`} position={[x, y, z]} castShadow>
+            <sphereGeometry args={[0.025, 8, 8]} />
+            <meshStandardMaterial
+              color="#334155"
+              metalness={0.1}
+              roughness={0.3}
+            />
+          </mesh>
+        ))}
+
+        {/* Top horizontal edges - thinner */}
         {[
           { pos: [0, 1.5, -1], rot: [0, 0, Math.PI / 2] },
           { pos: [0, 1.5, 1], rot: [0, 0, Math.PI / 2] },
@@ -235,16 +257,21 @@ function SpinningCube({ isActive }: { isActive: boolean }) {
           { pos: [1, 1.5, 0], rot: [0, Math.PI / 2, Math.PI / 2] },
         ].map(({ pos, rot }, i) => (
           <mesh
-            key={i}
+            key={`top-${i}`}
             position={pos as [number, number, number]}
             rotation={rot as [number, number, number]}
+            castShadow
           >
-            <cylinderGeometry args={[0.03, 0.03, 2]} />
-            <meshStandardMaterial color="#334155" />
+            <cylinderGeometry args={[0.015, 0.015, 2, 8]} />
+            <meshStandardMaterial
+              color="#334155"
+              metalness={0.1}
+              roughness={0.3}
+            />
           </mesh>
         ))}
 
-        {/* Bottom horizontal edges */}
+        {/* Bottom horizontal edges - thinner */}
         {[
           { pos: [0, -0.5, -1], rot: [0, 0, Math.PI / 2] },
           { pos: [0, -0.5, 1], rot: [0, 0, Math.PI / 2] },
@@ -252,15 +279,32 @@ function SpinningCube({ isActive }: { isActive: boolean }) {
           { pos: [1, -0.5, 0], rot: [0, Math.PI / 2, Math.PI / 2] },
         ].map(({ pos, rot }, i) => (
           <mesh
-            key={i}
+            key={`bottom-${i}`}
             position={pos as [number, number, number]}
             rotation={rot as [number, number, number]}
+            castShadow
           >
-            <cylinderGeometry args={[0.03, 0.03, 2]} />
-            <meshStandardMaterial color="#334155" />
+            <cylinderGeometry args={[0.015, 0.015, 2, 8]} />
+            <meshStandardMaterial
+              color="#334155"
+              metalness={0.1}
+              roughness={0.3}
+            />
           </mesh>
         ))}
       </group>
+
+      {/* Sky blue glass interior - brighter and more visible */}
+      <mesh position={[0, 0.5, 0]}>
+        <boxGeometry args={[1.8, 1.8, 1.8]} />
+        <meshStandardMaterial
+          color="#87ceeb"
+          transparent={true}
+          opacity={0.4}
+          emissive="#7dd3fc"
+          emissiveIntensity={0.1}
+        />
+      </mesh>
     </group>
   );
 }
@@ -542,16 +586,23 @@ export function BrickBuildingAnimation() {
                   camera={{ position: [4, 3, 4], fov: 50 }}
                   className="rounded-lg"
                 >
-                  {/* Lighting */}
-                  <ambientLight intensity={0.6} />
+                  {/* Enhanced lighting for premium look */}
+                  <ambientLight intensity={0.4} />
                   <directionalLight
                     position={[10, 10, 5]}
-                    intensity={0.8}
+                    intensity={1.2}
                     castShadow
                     shadow-mapSize-width={2048}
                     shadow-mapSize-height={2048}
+                    shadow-camera-far={50}
+                    shadow-camera-left={-10}
+                    shadow-camera-right={10}
+                    shadow-camera-top={10}
+                    shadow-camera-bottom={-10}
                   />
-                  <directionalLight position={[-5, 5, -5]} intensity={0.3} />
+                  <directionalLight position={[-5, 5, -5]} intensity={0.4} color="#64748b" />
+                  <pointLight position={[0, 3, 3]} intensity={0.5} color="#94a3b8" />
+                  <hemisphereLight args={["#f1f5f9", "#334155", 0.3]} />
 
                   {/* Spinning cube component */}
                   <SpinningCube isActive={animationPhase === 2} />
