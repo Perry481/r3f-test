@@ -14,7 +14,10 @@ export default function HomePage() {
             {/* Content Column */}
             <div className="lg:text-left">
               <h1 className="text-5xl md:text-7xl font-bold text-slate-800 mb-6 animate-slide-stagger-1">
-                {"2D in 3D out"}
+                <span className="blueprint-text relative">2D</span>
+                <span className="text-slate-600 mx-4">in</span>
+                <span className="solid-3d-text-bevel">3D</span>
+                <span className="text-slate-600 ml-4">out</span>
               </h1>
               <h2 className="text-3xl md:text-5xl font-bold text-orange-600 mb-8 animate-slide-stagger-2">
                 {"from 2D CAD to 3D"}

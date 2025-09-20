@@ -315,3 +315,54 @@
 .perspective-1000 {
   perspective: 1000px;
 }
+
+/* Added blueprint and 3D text styling effects */
+.blueprint-text {
+  color: #1e40af;
+  position: relative;
+  font-family: "Courier New", monospace;
+  letter-spacing: 0.05em;
+}
+
+.blueprint-text::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+      90deg,
+      transparent 0%,
+      transparent 48%,
+      #1e40af 48%,
+      #1e40af 52%,
+      transparent 52%,
+      transparent 100%
+    ),
+    linear-gradient(0deg, transparent 0%, transparent 48%, #1e40af 48%, #1e40af 52%, transparent 52%, transparent 100%);
+  background-size: clamp(16px, 2vw, 32px) clamp(16px, 2vw, 32px), clamp(16px, 2vw, 32px) clamp(16px, 2vw, 32px);
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.blueprint-text::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 2px dashed #1e40af;
+  opacity: 0.7;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Clean beveled edge for 3D text */
+.solid-3d-text-bevel {
+  color: #374151;
+  text-shadow: 1px 1px 0px #6b7280, 2px 2px 0px #9ca3af, 2px 2px 6px rgba(0, 0, 0, 0.1);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
