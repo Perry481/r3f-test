@@ -54,11 +54,12 @@ export default function HomePage() {
 
 function HeroSection() {
   return (
-    <section id="home" className="relative flex min-h-screen items-center justify-center pt-28 md:pt-32">
+    <section id="home" className="relative overflow-hidden pt-32 pb-20 md:pt-40 md:pb-32">
       <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 via-transparent to-slate-600/5" />
+      <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-white via-white/80 to-transparent" />
 
       <div className="container relative z-10 mx-auto px-4 text-center">
-        <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-2">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-2 lg:gap-16">
           <div className="lg:text-left">
             <h1 className="animate-slide-stagger-1 mb-6 text-5xl font-bold text-slate-800 md:text-7xl">
               <span className="blueprint-text relative">2D</span>
@@ -86,7 +87,7 @@ function HeroSection() {
             </div>
           </div>
 
-          <div className="flex justify-center lg:justify-end">
+          <div className="flex justify-center pt-6 lg:justify-end lg:pt-0">
             <BrickBuildingAnimation />
           </div>
         </div>
