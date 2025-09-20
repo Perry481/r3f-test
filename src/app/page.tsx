@@ -2,7 +2,6 @@ import Link from "next/link";
 import { BrickBuildingAnimation } from "@/components/brick-building-animation";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
-import { FeatureGrid } from "@/components/marketing/feature-grid";
 import { Button } from "@/components/ui/button";
 
 const navLinks = [
@@ -11,36 +10,21 @@ const navLinks = [
   { href: "#cta", label: "Contact" },
 ];
 
-const featureItems = [
-  {
-    title: "Upload 2D CAD",
-    description: "Import your construction drawings and blueprints for analysis.",
-    icon: <FeatureGlyph variant="square" />,
-  },
-  {
-    title: "AI Processing",
-    description: "Our AI interprets plans and converts them into 3D structures.",
-    icon: <FeatureGlyph variant="tilt" />,
-  },
-  {
-    title: "3D CAD Model",
-    description: "Preview detailed 3D models ready for construction planning.",
-    icon: <FeatureGlyph variant="stack" />,
-  },
-];
-
 const processItems = [
   {
     title: "Upload 2D CAD",
     description: "Import your existing 2D construction drawings and blueprints.",
+    iconVariant: "square" as const,
   },
   {
     title: "AI Processing",
     description: "Our AI analyzes and converts your 2D plans into 3D structures.",
+    iconVariant: "tilt" as const,
   },
   {
     title: "3D CAD Model",
     description: "Receive detailed 3D models that keep projects moving forward.",
+    iconVariant: "stack" as const,
   },
 ];
 
@@ -91,7 +75,11 @@ function HeroSection() {
             </p>
             <div className="animate-slide-stagger-4">
               <Link href="/workspace">
-                <Button className="px-8 py-6 text-lg" size="lg" variant="default">
+                <Button
+                  className="px-8 py-6 text-lg bg-orange-600 hover:bg-orange-700 transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
+                  size="lg"
+                  variant="default"
+                >
                   Start Building in 3D
                 </Button>
               </Link>
@@ -118,8 +106,6 @@ function FeaturesSection() {
             before breaking ground.
           </p>
         </div>
-
-        <FeatureGrid items={featureItems} />
 
         <div id="process" className="mx-auto mt-16 max-w-5xl">
           <ProcessTimeline items={processItems} />
@@ -154,6 +140,7 @@ function CallToActionSection() {
 interface ProcessItem {
   title: string;
   description: string;
+  iconVariant: GlyphVariant;
 }
 
 function ProcessTimeline({ items }: { items: ProcessItem[] }) {
@@ -161,7 +148,7 @@ function ProcessTimeline({ items }: { items: ProcessItem[] }) {
     <div className="grid gap-8 md:grid-cols-3">
       {items.map((item) => (
         <div key={item.title} className="p-6 text-center">
-          <FeatureGlyph variant="badge" />
+          <FeatureGlyph variant={item.iconVariant} />
           <h4 className="mb-3 text-xl font-bold text-slate-800">{item.title}</h4>
           <p className="text-slate-600">{item.description}</p>
         </div>
@@ -170,24 +157,18 @@ function ProcessTimeline({ items }: { items: ProcessItem[] }) {
   );
 }
 
-type GlyphVariant = "square" | "tilt" | "stack" | "badge";
+type GlyphVariant = "square" | "tilt" | "stack";
 
 function FeatureGlyph({ variant }: { variant: GlyphVariant }) {
-  if (variant === "square") {
-    return <div className="h-8 w-8 rounded bg-orange-600" />;
-  }
-
-  if (variant === "tilt") {
-    return <div className="h-8 w-8 rotate-12 rounded bg-orange-600" />;
-  }
-
-  if (variant === "stack") {
-    return <div className="h-6 w-6 translate-x-1 translate-y-1 rounded bg-orange-600 shadow-lg" />;
-  }
+  const innerClass = {
+    square: "h-8 w-8 rounded bg-orange-600",
+    tilt: "h-8 w-8 rounded bg-orange-600 rotate-12",
+    stack: "h-6 w-6 rounded bg-orange-600 shadow-lg translate-x-1 translate-y-1",
+  }[variant];
 
   return (
     <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-lg bg-orange-100">
-      <div className="h-8 w-8 rounded bg-orange-600" />
+      <div className={innerClass} />
     </div>
   );
 }

@@ -452,6 +452,7 @@ function SkyGlassInterior() {
   );
 }
 
+
 function createTopEdgeSegments(height: number): DottedLineSegment[] {
   return bottomEdgeSegments.map(({ start, end }) => ({
     start: [start[0], height - 0.5, start[2]] as [number, number, number],
