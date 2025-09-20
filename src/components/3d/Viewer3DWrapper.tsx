@@ -1,7 +1,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState, useEffect } from "react";
 
 // Loading component shown while 3D viewer loads
 function Viewer3DLoading() {
@@ -35,17 +34,6 @@ export default function Viewer3DWrapper({
   showTestObjects = true,
   className = "",
 }: Viewer3DWrapperProps) {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  // Don't render anything on server side
-  if (!isMounted) {
-    return <Viewer3DLoading />;
-  }
-
   return (
     <div className={`w-full h-full ${className}`}>
       <Viewer3D
