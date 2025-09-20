@@ -4,9 +4,65 @@ import Link from "next/link";
 
 export default function HomePage() {
   return (
-    <div className="bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="bg-gradient-to-br from-slate-50 via-white to-slate-100">
+      <header className="sticky top-0 z-20 border-b border-orange-200/50 bg-white/75 backdrop-blur-lg shadow-sm">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between py-4">
+            <Link
+              href="/"
+              className="text-xl font-semibold text-slate-800 flex items-center gap-2 transition-colors duration-200 hover:text-slate-900"
+            >
+              <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-orange-500 text-white font-bold shadow-sm">
+                {"CT"}
+              </span>
+              <span>{"CAD Transform"}</span>
+            </Link>
+            <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
+              <a
+                href="#features"
+                className="group relative inline-flex items-center px-1 py-2 transition-colors duration-200 hover:text-slate-900"
+              >
+                <span>{"Features"}</span>
+                <span className="pointer-events-none absolute inset-x-0 -bottom-0.5 h-[2px] scale-x-0 transform bg-gradient-to-r from-orange-600 via-orange-500 to-amber-400 transition-transform duration-200 ease-out group-hover:scale-x-100" />
+              </a>
+              <a
+                href="#process"
+                className="group relative inline-flex items-center px-1 py-2 transition-colors duration-200 hover:text-slate-900"
+              >
+                <span>{"Process"}</span>
+                <span className="pointer-events-none absolute inset-x-0 -bottom-0.5 h-[2px] scale-x-0 transform bg-gradient-to-r from-orange-600 via-orange-500 to-amber-400 transition-transform duration-200 ease-out group-hover:scale-x-100" />
+              </a>
+              <a
+                href="#cta"
+                className="group relative inline-flex items-center px-1 py-2 transition-colors duration-200 hover:text-slate-900"
+              >
+                <span>{"Contact"}</span>
+                <span className="pointer-events-none absolute inset-x-0 -bottom-0.5 h-[2px] scale-x-0 transform bg-gradient-to-r from-orange-600 via-orange-500 to-amber-400 transition-transform duration-200 ease-out group-hover:scale-x-100" />
+              </a>
+            </nav>
+            <div className="hidden md:block">
+              <Link href="/workspace">
+                <Button className="bg-orange-600 hover:bg-orange-700">
+                  {"Launch Workspace"}
+                </Button>
+              </Link>
+            </div>
+            <div className="md:hidden">
+              <Link
+                href="/workspace"
+                className="text-sm font-semibold text-orange-600 hover:text-orange-700"
+              >
+                {"Workspace"}
+              </Link>
+            </div>
+          </div>
+        </div>
+      </header>
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center">
+      <section
+        id="home"
+        className="relative min-h-screen flex items-center justify-center pt-28 md:pt-32"
+      >
         <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 via-transparent to-slate-600/5" />
 
         <div className="container mx-auto px-4 text-center relative z-10">
@@ -49,7 +105,7 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-white">
+      <section id="features" className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h3 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
@@ -62,7 +118,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div id="process" className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <div className="text-center p-6">
               <div className="w-16 h-16 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <div className="w-8 h-8 bg-orange-600 rounded"></div>
@@ -103,7 +159,10 @@ export default function HomePage() {
       </section>
 
       {/* Call to Action */}
-      <section className="py-20 bg-gradient-to-r from-orange-600 to-slate-700">
+      <section
+        id="cta"
+        className="py-20 bg-gradient-to-r from-orange-600 to-slate-700"
+      >
         <div className="container mx-auto px-4 text-center">
           <h4 className="text-4xl md:text-5xl font-bold text-white mb-6">
             {"Ready to Build in 3D?"}
